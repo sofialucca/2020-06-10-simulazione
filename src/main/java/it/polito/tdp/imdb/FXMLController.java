@@ -5,8 +5,10 @@
 package it.polito.tdp.imdb;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.imdb.model.Actor;
 import it.polito.tdp.imdb.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,10 +37,10 @@ public class FXMLController {
     private Button btnSimulazione; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGenere"
-    private ComboBox<?> boxGenere; // Value injected by FXMLLoader
+    private ComboBox<String> boxGenere; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxAttore"
-    private ComboBox<?> boxAttore; // Value injected by FXMLLoader
+    private ComboBox<Actor> boxAttore; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtGiorni"
     private TextField txtGiorni; // Value injected by FXMLLoader
@@ -48,12 +50,45 @@ public class FXMLController {
 
     @FXML
     void doAttoriSimili(ActionEvent event) {
-
+    	txtResult.clear();
+    	Actor a = this.boxAttore.getValue();
+    	if(a == null) {
+    		txtResult.appendText("ERRORE: selezionare un attore\n");
+    		return;
+    	}
+    	List<Actor> result = model.getAttoriRaggiungibili(a);
+    	if(result.size() == 0) {
+    		txtResult.appendText("Non ci sono attori simili a: ");
+    		txtResult.appendText(a.toString());
+    	}else {
+    		txtResult.appendText("ATTORI SIMILI A: " + a);
+    		for(Actor ac : result) {
+    			txtResult.appendText("\n" + ac.toString());
+    		}
+    	}
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	txtResult.clear();
+    	
+    	String genere = this.boxGenere.getValue();
+    	if(genere == null) {
+    		txtResult.appendText("ERRORE: scegliere un genere");
+    		return;
+    	}
+    	model.creaGrafo(genere);
+    	List<Actor> attori = model.getActors();
+    	
+    	txtResult.appendText("Grafo creato:\n");
+    	txtResult.appendText("# vertici: " + attori.size());
+    	txtResult.appendText("\n# archi: " +model.getEdgeSize());
+    	
+    	this.boxAttore.getItems().setAll(attori);
+    	this.boxAttore.setDisable(false);
+    	this.btnSimili.setDisable(false);
+    	this.txtGiorni.setDisable(false);
+    	this.btnSimulazione.setDisable(false);
     }
 
     @FXML
@@ -75,5 +110,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.boxGenere.getItems().setAll(model.getGeneri());
     }
 }
