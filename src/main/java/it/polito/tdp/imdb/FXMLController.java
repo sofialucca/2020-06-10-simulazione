@@ -94,9 +94,37 @@ public class FXMLController {
     @FXML
     void doSimulazione(ActionEvent event) {
 
+    	txtResult.clear();
+    	
+    	if(!isValid()) {
+    		return;
+    	}
+    	String nGiorni = txtGiorni.getText();
+    	model.setSim(Integer.parseInt(nGiorni));
+    	txtResult.appendText("PER LA PRODUZIONE DI UN FILM " + this.boxGenere.getValue() + " SONO STATI INTERVISTATI IN " + nGiorni + " GIORNI");
+    	txtResult.appendText("\n\nTOTALI PAUSE: " + model.getPause() +"\n");
+    	for(Actor a: model.getIntervistati()) {
+    		txtResult.appendText("\n" + a.toString());
+    	}
+    	
     }
 
-    @FXML // This method is called by the FXMLLoader when initialization is complete
+    private boolean isValid() {
+		String input = this.txtGiorni.getText();
+		if(input.equals("")) {
+			txtResult.appendText("ERRORE: inserire un numero di giorni");
+			return false;
+		}
+		try {
+			Integer.parseInt(input);
+		}catch(NumberFormatException nfe) {
+			txtResult.appendText("ERRORE: insrire un numero intero.");
+			return false;
+		}
+		return true;
+	}
+
+	@FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
         assert btnCreaGrafo != null : "fx:id=\"btnCreaGrafo\" was not injected: check your FXML file 'Scene.fxml'.";
         assert btnSimili != null : "fx:id=\"btnSimili\" was not injected: check your FXML file 'Scene.fxml'.";

@@ -9,9 +9,10 @@ public class TestModel {
 		
 		m.creaGrafo("Horror");
 		
-		for(Actor a : m.getActors()) {
-			System.out.println(a);			
-		}
+		m.setSim(10);
+		System.out.println(m.getPause());
+		System.out.println(m.getIntervistati());
+
 
 	}
 

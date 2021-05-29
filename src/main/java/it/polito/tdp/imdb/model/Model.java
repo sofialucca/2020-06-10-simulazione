@@ -25,9 +25,11 @@ public class Model {
 	private ImdbDAO dao;
 	private Map<Integer, Actor> idMap;
 	private Map<Actor, Actor> predecessore;
+	private Simulatore sim;
 	
 	public Model() {
 		dao = new ImdbDAO();
+		sim = new Simulatore();
 	}
 	
 	public void creaGrafo(String genere) {
@@ -43,9 +45,6 @@ public class Model {
 			Graphs.addEdge(grafo, a.getA1(), a.getA2(), a.getPeso());
 		}
 		
-		System.out.println("GRAFO CREATO:");
-		System.out.println("# vertici: " + grafo.vertexSet().size());
-		System.out.println("#archi: " + grafo.edgeSet().size());
 	}
 	
 	public List<String> getGeneri(){
@@ -110,5 +109,18 @@ public class Model {
 		List<Actor> attori = new ArrayList<>(grafo.vertexSet());
 		Collections.sort(attori);
 		return attori;
+	}
+	
+	public void setSim(int n) {
+		sim.init(grafo, n);
+		sim.run();
+	}
+	
+	public int getPause() {
+		return sim.getPause();
+	}
+	
+	public List<Actor> getIntervistati(){
+		return sim.getIntervistati();
 	}
 }
